@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Login">
+
+	<resultMap id="userVO" type="com.lime.user.vo.UserVO">
+		<result property="userSeq" column="USER_SEQ"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="pwd" column="PWD"/>
+		<result property="userName" column="USER_NAME"/>
+		<result property="regDt" column="REG_DT"/>
+	</resultMap>
+
+	<insert id="insertMember" parameterType="userVO">
+		INSERT INTO USER_TB(USER_SEQ,USER_ID,PWD,USER_NAME,REG_DT) 
+		VALUES(USER_SEQ.NEXTVAL,#{userId},#{pwd},#{userName},SYSDATE)
+	</insert>
+	
+	<select id="idCheck" parameterType="string" resultType="int">
+		SELECT COUNT(*)
+		FROM USER_TB 
+		WHERE USER_ID LIKE #{userId}
+	</select>
+	
+	<select id="login" parameterType="string" resultMap="userVO">
+		SELECT  * FROM USER_TB 
+		WHERE USER_ID LIKE #{userId} and PWD LIKE #{pwd}
+	</select>
+
+</mapper>
