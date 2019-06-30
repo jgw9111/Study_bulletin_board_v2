@@ -22,8 +22,14 @@
 	</select>
 	
 	<select id="login" parameterType="string" resultMap="userVO">
-		SELECT  * FROM USER_TB 
-		WHERE USER_ID LIKE #{userId} and PWD LIKE #{pwd}
+		SELECT USER_SEQ,
+				USER_ID, 
+				PWD, 
+				USER_NAME, 
+				REG_DT  
+		FROM USER_TB 
+		WHERE USER_ID LIKE #{userId} 
+			and PWD LIKE #{pwd}
 	</select>
 
 </mapper>

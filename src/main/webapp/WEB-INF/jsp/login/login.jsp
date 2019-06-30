@@ -34,15 +34,10 @@
 				"pwd" : $('#memPassword').val()
 				},
 			success: function(data){
-				if( data.user == null){
-					alert('로그인 실패 \n id와 비밀번호를 확인하세요');
-					location.href="http://localhost:9000/boardAjax/";
-				}else{
-					location.href="http://localhost:9000/boardAjax/account/accountList.do"; 
-				}
+				location.href="http://localhost:9000/account/accountList.do"; 
 			},error: function(){
+				//모달 띄우기
 				alert('로그인 실패');
-				
 			}
 		});
 	});

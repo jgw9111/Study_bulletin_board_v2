@@ -102,5 +102,13 @@
     </bean>
 	<!-- /For Pagination Tag -->
 
+	<bean id="LoginInterceptor" class="com.lime.util.LoginInterceptor"></bean>
+	<mvc:interceptors>
+	     <mvc:interceptor>
+	         <mvc:mapping path="/boradAjax/*.do"/>
+			<ref bean="LoginInterceptor"/>	         
+	     </mvc:interceptor>
+	 </mvc:interceptors>
+
     <mvc:view-controller path="/cmmn/validator.do" view-name="cmmn/validator"/>
 </beans>

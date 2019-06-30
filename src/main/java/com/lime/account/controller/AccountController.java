@@ -1,7 +1,5 @@
 package com.lime.account.controller;
 
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,11 +20,15 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import com.lime.account.service.AccountService;
+import com.lime.board.vo.BoardVO;
 import com.lime.common.service.CommonService;
 import com.lime.login.service.UserService;
 import com.lime.user.vo.UserVO;
@@ -50,6 +52,7 @@ public class AccountController {
 	
 	@Resource(name = "userService")
 	private UserService userService;
+	
 
 	/**
 	 *
@@ -59,40 +62,48 @@ public class AccountController {
 	 * @exception Exception
 	 */
 	@RequestMapping(value = "/account/accountList.do")
-	public ModelAndView selectSampleList(HttpServletRequest request, ModelMap model) throws Exception {
+	public ModelAndView selectSampleList(@ModelAttribute("user") UserVO user, 
+			HttpServletRequest request, ModelMap model) throws Exception {
 		// 리스트 가져오기
-		System.out.println("selectSampleList");
+		System.out.println("List");
 		
 		ModelAndView mav = new ModelAndView();
 		Map<String, Object> inOutMap  = CommUtils.getFormParam(request);
 		
-		HttpSession session = request.getSession();
-		UserVO user = (UserVO) session.getAttribute("user");
-		session.setAttribute("userName", user.getUserName());
-		
-		System.out.println("name :: "+session.getAttribute("userName"));
-		inOutMap.put("userName", session.getAttribute("userName"));
+		UserVO login = (UserVO) request.getSession().getAttribute("user");
+		System.out.println(login.toString());
+		inOutMap.put("userName",login.getUserName());
 		model.put("inOutMap", inOutMap);
 		
 		List<EgovMap> result = commonService.selectAccountList(inOutMap);
 		System.out.println("result ::  "+result);
 		model.put("result", result);
 		
-//		mav.addAllObjects(model);
 		mav.setViewName( "/account/accountList");
 		mav.addObject("accountList",result);
+		
 		return mav;
 	}
 
-	
-	@RequestMapping(value="/account/accontDetail.do")
-	public String selectListDetail(HttpServletRequest request){
-		System.out.println("list detail");
+	@ResponseBody
+	@RequestMapping(value="/account/selectListOne.do/{accountSeq}",method=RequestMethod.GET)
+	public ModelAndView selectListOne(HttpServletRequest request, ModelMap model){
+		System.out.println("selectListOne  ");
+		ModelAndView mav = new ModelAndView();
+		String mode = "edit";
 		Map<String, Object> inOutMap  = CommUtils.getFormParam(request);
-
-			System.out.println(inOutMap);
-//		commonService.selectAccountListOne(inOutMap);
-		return "/account/accountInsert";
+		System.out.println("---->"+inOutMap);
+		
+		List<EgovMap> resultMap = commonService.selectAccountListOne(inOutMap);
+		
+		System.out.println(resultMap);
+		System.out.println(mode);
+		
+		inOutMap.put("mode", mode);
+		inOutMap.put("resultMap", resultMap);
+//		mav.addObject("resultMap", resultMap);
+		mav.setViewName("/account/accountInsert");
+		return new ModelAndView(jsonView,inOutMap);
 		
 	}
 
@@ -103,17 +114,13 @@ public class AccountController {
 	 * @return
 	 * @throws Exception
 	 */
+	
 	@RequestMapping(value="/account/accountInsert.do")
 	public String accountInsert(HttpServletRequest request, ModelMap model) throws Exception{
-		Map<String, Object> inOutMap = new HashMap<>();
-		
-//		HttpSession session = request.getSession();
-//		UserVO user = (UserVO) session.getAttribute("user");
-//		session.setAttribute("userName", user.getUserName());
-//		
-//		System.out.println(session.getAttribute("userName"));
 		System.out.println("-----accountInsert---->");
-		
+		Map<String, Object> inOutMap = CommUtils.getFormParam(request);
+		inOutMap.get("mode");
+		inOutMap.get("resultMap");
 		inOutMap.put("category", "A000000");
 		System.out.println("inOutMap ?? ---------->"+inOutMap);
 		List<EgovMap> resultMap= commonService.selectCombo(inOutMap);
@@ -149,7 +156,7 @@ public class AccountController {
 	public ModelAndView insertCombo(HttpServletRequest request, ModelMap model) throws Exception{
 		System.out.println("=======insertCombo====");
 		Map<String, Object> inOutMap  = CommUtils.getFormParam(request);
-
+		
 		HttpSession session = request.getSession();
 		UserVO user = (UserVO) session.getAttribute("user");
 		session.setAttribute("userName",user.getUserName());
@@ -165,7 +172,7 @@ public class AccountController {
 
 	@RequestMapping(value="/account/excelDownload.do")
 	public void excelDownload(HttpServletResponse response,HttpServletRequest request) throws Exception {
-		System.out.println("엑셀다운로드");
+		// poi를 활용한 엑셀다운로드
 		Map<String, Object> inOutMap  = CommUtils.getFormParam(request);
 		
 		// id

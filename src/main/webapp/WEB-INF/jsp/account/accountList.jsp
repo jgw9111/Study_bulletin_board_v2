@@ -22,10 +22,9 @@
 			</div>
 		</div>
 	    <br/>
-		<table class="table table-hover">
+		<table class="table table-hover" id="boardList">
 			    <thead>
 			      <tr align="center">
-<!-- 			        <th style="text-align: center;" >no</th> -->
 			        <th style="text-align: center;" >수익/비용</th>
 			        <th style="text-align: center;" >관</th>
 			        <th style="text-align: center;" >항</th>
@@ -36,11 +35,10 @@
 			        <th style="text-align: center;" >작성자</th>
 			      </tr>
 			    </thead>
-			    
 			    <tbody>
 				    <c:forEach var="result" items="${accountList}" varStatus="status">
-				   		 <tr align="center" id="accountList_${status.count}" onclick="location.href='<%=request.getContextPath()%>/account/accontDetail.do'" style="cursor: pointer;">
-	<%-- 			   		 	<td> ${status.count} </td> --%>
+				   		 <tr align="center"  style="cursor: pointer;">
+							<td style="display:none;"> <c:out value="${result.accountSeq}"/></td>
 							<td> <c:out value="${result.profitCost}"/></td>
 							<td> <c:out value="${result.bigGroup}"/></td>
 							<td> <c:out value="${result.middleGroup}"/></td>
@@ -56,3 +54,23 @@
 
 </div>
 </form>
+<script>
+	$('#boardList tr').click(function(){
+
+		$.ajax({
+			data : {accountSeq : $.trim($(this).find("td").eq(0).text())},
+			url: "<%=request.getContextPath()%>/account/selectListOne.do/"+accountSeq,
+			type: "get",
+			success: function(data) {
+				console.log("mode  :: "+data.mode);
+				console.log("resultMap  :: "+data.resultMap);
+				var mode = data.mode;
+				var resultMap = data.resultMap;
+// 				location.href="http://localhost:9000/boardAjax/account/accountInsert.do";
+				
+			},error: function(request,error) {
+				alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+			} 
+		});
+	});
+</script>

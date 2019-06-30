@@ -8,6 +8,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -52,41 +53,36 @@ public class LoginController {
 		return new ModelAndView(jsonView, inOutMap);
 	}
 	
-	@ResponseBody
 	@RequestMapping(value = "/login/assign.do",method=RequestMethod.POST)
-	public ModelAndView selectLogin(HttpServletRequest request, ModelMap model) throws Exception {
+	public String selectLogin(@ModelAttribute("user") UserVO user, 
+			HttpServletRequest request, ModelMap model) throws Exception {
 		System.out.println("-------selectLogin-------");
 		Map<String, Object> inOutMap  = CommUtils.getFormParam(request);
-		HttpSession session = request.getSession();
 		System.out.println("inOutMap"+ inOutMap);
 		
-		UserVO user = new UserVO();
-		user.setUserId(request.getParameter("userId"));
-		user.setPwd(request.getParameter("pwd"));
-		user.setUserName(request.getParameter("userName"));
+		UserVO resultVO = new UserVO();
 		
-		UserVO login = userService.login(user);
+		resultVO = userService.login(user);
 		
-		if(login == null){
-			session.setAttribute("user", null);
-			System.out.println("로그인 실패"+session.getAttribute("user"));
+		if(resultVO != null && !resultVO.getUserId().equals("") && !resultVO.getPwd().equals("")){
+			request.getSession().setAttribute("user", resultVO);
+			System.out.println("로그인 성공"+request.getSession().getAttribute("user"));
+			return "forward:/account/accountList.do";
 		}else{
-			session.setAttribute("user", login);
-			System.out.println("로그인 성공"+session.getAttribute("user"));
+			System.out.println("로그인 실패"+request.getSession().getAttribute("user"));
+			model.addAttribute("msg", "사용자의 ID 혹은 패스워드가 일치하지 않습니다.");
+			return "redirect:/login.do";
 		}
-		model.put("inOutMap", inOutMap);
-		model.put("user", login);
+//		model.put("inOutMap", inOutMap);
 		
-		return new ModelAndView(jsonView, inOutMap);
 	}
 
 	@RequestMapping("/login/logout.do")
-	public String selectLogout(HttpServletRequest request){
-		HttpSession session = request.getSession();
-		System.out.println("로그아웃 1!!!!!!!"+session);
-		session.invalidate();
-		System.out.println("로그아웃 2!!!!!!!"+session);
-		return "/login/login";
+	public String selectLogout(@ModelAttribute("user") UserVO user, HttpServletRequest request){
+		
+		request.getSession().removeAttribute("user");
+		
+		return "redirect:/login/login.do";
 		
 	}
 

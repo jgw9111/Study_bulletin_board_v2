@@ -2,6 +2,11 @@ package com.lime.user.vo;
 
 public class UserVO {
 
+	@Override
+	public String toString() {
+		return "UserVO [userSeq=" + userSeq + ", userId=" + userId + ", pwd=" + pwd + ", userName=" + userName
+				+ ", regDt=" + regDt + "]";
+	}
 	private String userSeq   ;
 	private String userId  ;
 	private String pwd  ;
