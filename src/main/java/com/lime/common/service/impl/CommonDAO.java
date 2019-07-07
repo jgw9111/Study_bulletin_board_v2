@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 
+import com.lime.board.vo.BoardVO;
+
 import egovframework.rte.fdl.cmmn.exception.EgovBizException;
 import egovframework.rte.psl.dataaccess.EgovAbstractMapper;
 import egovframework.rte.psl.dataaccess.util.EgovMap;
@@ -25,8 +27,8 @@ public class CommonDAO extends EgovAbstractMapper{
 		
 	};
 	
-	public List<EgovMap> selectAccountListOne(Map<String, Object> inOutMap){
-		return selectList("Common.selectAccountListOne",inOutMap);
+	public BoardVO selectAccountListOne(Map<String, Object> inOutMap){
+		return selectOne("Common.selectAccountListOne",inOutMap);
 		
 	};
 }

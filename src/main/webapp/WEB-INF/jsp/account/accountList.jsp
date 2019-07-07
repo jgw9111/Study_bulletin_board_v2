@@ -38,7 +38,7 @@
 			    <tbody>
 				    <c:forEach var="result" items="${accountList}" varStatus="status">
 				   		 <tr align="center"  style="cursor: pointer;">
-							<td style="display:none;"> <c:out value="${result.accountSeq}"/></td>
+							<td style="display:none;"><c:out value="${result.accountSeq}"/></td>
 							<td> <c:out value="${result.profitCost}"/></td>
 							<td> <c:out value="${result.bigGroup}"/></td>
 							<td> <c:out value="${result.middleGroup}"/></td>
@@ -48,29 +48,22 @@
 							<td> <c:out value="${result.regDate}"/></td>
 							<td> <c:out value="${result.writer}"/></td>
 						</tr>
-				    </c:forEach>
+				    </c:forEach> 
 			    </tbody>
 			</table>
 
 </div>
 </form>
+
+<div>
+	<form id="seq" action="/account/selectListOne.do" method="post">
+		<input type="hidden" name="accountSeq" id="accountSeq"/>	
+	</form>
+</div>
+
 <script>
 	$('#boardList tr').click(function(){
-
-		$.ajax({
-			data : {accountSeq : $.trim($(this).find("td").eq(0).text())},
-			url: "<%=request.getContextPath()%>/account/selectListOne.do/"+accountSeq,
-			type: "get",
-			success: function(data) {
-				console.log("mode  :: "+data.mode);
-				console.log("resultMap  :: "+data.resultMap);
-				var mode = data.mode;
-				var resultMap = data.resultMap;
-// 				location.href="http://localhost:9000/boardAjax/account/accountInsert.do";
-				
-			},error: function(request,error) {
-				alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
-			} 
-		});
+		$.trim($('#accountSeq').val($(this).find("td").eq(0).text())); 
+		$('#seq').submit();
 	});
 </script>

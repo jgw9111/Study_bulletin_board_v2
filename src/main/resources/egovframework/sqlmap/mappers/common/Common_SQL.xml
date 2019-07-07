@@ -10,59 +10,74 @@
 		  COM_KOR
 		FROM CODE_MASTER
 		WHERE
-			CATEGORY = #{category}
+			CATEGORY = #{category, jdbcType=VARCHAR}
 		AND
 			USE_YN     ='Y'
 	</select>
 	
 	<insert id="insertCombo" parameterType="map">
-		INSERT INTO account_tb(ACCOUNT_SEQ,PROFIT_COST,BIG_GROUP
-								,MIDDLE_GROUP,SMALL_GROUP,DETAIL_GROUP
-								,COMMENTS,TRANSACTION_MONEY,TRANSACTION_DATE,WRITER,REG_DATE)
-		VALUES(ACCOUNT_SEQ.nextval,#{profit_cost},#{big_group}
-				,#{middle_group},#{small_group},#{detail_group},#{comments}
-				,#{transaction_money},TO_DATE(#{transaction_date},'MM-DD-YYYY'),#{userName},SYSDATE)
+		INSERT INTO account_tb(
+				ACCOUNT_SEQ,
+				PROFIT_COST,
+				BIG_GROUP,
+				MIDDLE_GROUP,
+				SMALL_GROUP,
+				DETAIL_GROUP,
+				COMMENTS,
+				TRANSACTION_MONEY,
+				TRANSACTION_DATE,
+				WRITER,
+				REG_DATE
+		)VALUES(
+				ACCOUNT_SEQ.nextval,
+				#{profit_cost, jdbcType=VARCHAR},
+				#{big_group, jdbcType=VARCHAR},
+				#{middle_group, jdbcType=VARCHAR},
+				#{small_group, jdbcType=VARCHAR},
+				#{detail_group, jdbcType=VARCHAR},
+				#{comments, jdbcType=VARCHAR},
+				#{transaction_money},
+				#{transaction_date},
+				#{userName},
+				SYSDATE
+			)
 	
 	</insert>
 
 	<select id="selectAccountList" parameterType="map" resultType="egovMap">
 		SELECT  (SELECT COM_KOR
         		FROM CODE_MASTER C 
-        		WHERE c.code LIKE t.profit_cost ) PROFIT_COST,
+        		WHERE c.code LIKE t.profit_cost ) AS PROFIT_COST,
 		        (SELECT COM_KOR 
 				FROM CODE_MASTER C 
 		 		WHERE c.code LIKE t.big_group ) BIG_GROUP, 
 		 		DECODE(MIDDLE_GROUP,'0',' ',(SELECT COM_KOR 
 			    FROM CODE_MASTER C 
-			    WHERE c.code LIKE t.middle_group )) MIDDLE_GROUP, 
+			    WHERE c.code LIKE t.middle_group )) AS MIDDLE_GROUP, 
 		        DECODE(SMALL_GROUP,'0',' ',(SELECT COM_KOR 
 			    FROM CODE_MASTER C 
-				WHERE c.code LIKE t.small_group )) SMALL_GROUP,
+				WHERE c.code LIKE t.small_group )) AS SMALL_GROUP,
 			    DECODE(DETAIL_GROUP,'0',' ',(SELECT COM_KOR 
 			    FROM CODE_MASTER C 
-				WHERE c.code LIKE t.detail_group )) DETAIL_GROUP, 
-			    TO_CHAR(TRANSACTION_MONEY, '999,999,999')TRANSACTION_MONEY,SUBSTR(REG_DATE,1,10) REG_DATE,WRITER,ACCOUNT_SEQ
+				WHERE c.code LIKE t.detail_group )) AS DETAIL_GROUP, 
+			    TO_CHAR(TRANSACTION_MONEY, '999,999,999')TRANSACTION_MONEY,
+			    SUBSTR(REG_DATE,1,10) REG_DATE,
+			    WRITER,
+			    ACCOUNT_SEQ
 		FROM ACCOUNT_TB T
-		WHERE t.writer LIKE #{userName}
+		WHERE t.writer LIKE #{userName} 
 	</select>
 
-	<select id="selectAccountListOne" parameterType="map" resultType="egovMap">
-		SELECT  (SELECT COM_KOR
-        		FROM CODE_MASTER C 
-        		WHERE c.code LIKE t.profit_cost ) PROFIT_COST,
-		        (SELECT COM_KOR 
-				FROM CODE_MASTER C 
-		 		WHERE c.code LIKE t.big_group ) BIG_GROUP, 
-		 		DECODE(MIDDLE_GROUP,'0',' ',(SELECT COM_KOR 
-			    FROM CODE_MASTER C 
-			    WHERE c.code LIKE t.middle_group )) MIDDLE_GROUP, 
-		        DECODE(SMALL_GROUP,'0',' ',(SELECT COM_KOR 
-			    FROM CODE_MASTER C 
-				WHERE c.code LIKE t.small_group )) SMALL_GROUP,
-			    DECODE(DETAIL_GROUP,'0',' ',(SELECT COM_KOR 
-			    FROM CODE_MASTER C 
-				WHERE c.code LIKE t.detail_group )) DETAIL_GROUP, 
-			    TO_CHAR(TRANSACTION_MONEY, '999,999,999')TRANSACTION_MONEY,SUBSTR(REG_DATE,1,10) REG_DATE,WRITER,ACCOUNT_SEQ
+	<select id="selectAccountListOne" parameterType="map" resultType="com.lime.board.vo.BoardVO">
+		SELECT 	PROFIT_COST,
+		       	BIG_GROUP, 
+	 			MIDDLE_GROUP, 
+		        SMALL_GROUP,
+			    DETAIL_GROUP, 
+			    TO_CHAR(TRANSACTION_MONEY, '999,999,999')TRANSACTION_MONEY,
+			    SUBSTR(REG_DATE,1,10) REG_DATE,
+			    WRITER,
+			    ACCOUNT_SEQ
 		FROM ACCOUNT_TB T
 		WHERE ACCOUNT_SEQ LIKE #{accountSeq}
 	</select>

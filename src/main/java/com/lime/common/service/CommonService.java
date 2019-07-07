@@ -3,6 +3,8 @@ package com.lime.common.service;
 import java.util.List;
 import java.util.Map;
 
+import com.lime.board.vo.BoardVO;
+
 import egovframework.rte.psl.dataaccess.util.EgovMap;
 
 public interface CommonService {
@@ -13,6 +15,6 @@ public interface CommonService {
 	
 	List<EgovMap> selectAccountList(Map<String, Object> inOutMap);
 
-	List<EgovMap> selectAccountListOne(Map<String, Object> inOutMap);
+	BoardVO selectAccountListOne(Map<String, Object> inOutMap);
 
 }

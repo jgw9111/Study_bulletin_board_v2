@@ -28,7 +28,7 @@
 	      <ul class="nav navbar-nav ">
 	        <li class="dropdown active"><span><font size="2px" color="white" > 
 	        <br />
-	        	<c:out value="${inOutMap.userName}"></c:out>
+	        	<c:out value="${sessionScope.user.userName}"></c:out>
 
 	 		       님 로그인 </font></span></li>
 	        <li class="active"><a href="<%=request.getContextPath()%>/login/logout.do" id="logout"><span class="glyphicon glyphicon-log-in"></span> LogOut</a></li>

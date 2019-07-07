@@ -23,7 +23,6 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
@@ -85,25 +84,25 @@ public class AccountController {
 		return mav;
 	}
 
-	@ResponseBody
-	@RequestMapping(value="/account/selectListOne.do/{accountSeq}",method=RequestMethod.GET)
-	public ModelAndView selectListOne(HttpServletRequest request, ModelMap model){
+	@RequestMapping(value="/account/selectListOne.do",method= {RequestMethod.GET,RequestMethod.POST})
+	public ModelAndView selectListOne(HttpServletRequest request, ModelMap model) throws Exception{
 		System.out.println("selectListOne  ");
 		ModelAndView mav = new ModelAndView();
-		String mode = "edit";
 		Map<String, Object> inOutMap  = CommUtils.getFormParam(request);
 		System.out.println("---->"+inOutMap);
 		
-		List<EgovMap> resultMap = commonService.selectAccountListOne(inOutMap);
+		inOutMap.put("category", "A000000");
+		List<EgovMap> resultMap= commonService.selectCombo(inOutMap);
+		mav.addObject("resultMap", resultMap);
 		
-		System.out.println(resultMap);
-		System.out.println(mode);
+		BoardVO resultMap2 = commonService.selectAccountListOne(inOutMap);
 		
-		inOutMap.put("mode", mode);
-		inOutMap.put("resultMap", resultMap);
+		System.out.println(resultMap2);
+		
+		inOutMap.put("boardVO", resultMap2);
 //		mav.addObject("resultMap", resultMap);
 		mav.setViewName("/account/accountInsert");
-		return new ModelAndView(jsonView,inOutMap);
+		return mav;
 		
 	}
 

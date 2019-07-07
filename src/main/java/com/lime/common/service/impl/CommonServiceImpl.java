@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
 
+import com.lime.board.vo.BoardVO;
 import com.lime.common.service.CommonService;
 
 import egovframework.rte.psl.dataaccess.util.EgovMap;
@@ -34,7 +35,7 @@ public class CommonServiceImpl implements CommonService {
 	}
 
 	@Override
-	public List<EgovMap> selectAccountListOne(Map<String, Object> inOutMap) {
+	public BoardVO selectAccountListOne(Map<String, Object> inOutMap) {
 		// TODO Auto-generated method stub
 		return commonDAO.selectAccountListOne(inOutMap);
 	}
